@@ -9,28 +9,65 @@ function CrudWithRouting() {  // Changed name from Rounting to Routing
   const [blogData, setBlogData] = useState([]);
   const navigate = useNavigate();
   const [searchVal, setSearchVal] = useState("");
+  const [sortOption, setSortOption] = useState("all");
+  const [origindata, setorigindata]  =useState([])
 
-  const handelAsc=()=>{
-    let allBlog=JSON.parse(localStorage.getItem('blogData'));
-    let updateData=allBlog.sort((a,b)=>{
-      return a.DOB.localeCompare(b.DOB)
-    })
-    setBlogData(updateData)
-  }
+  // const handelAsc=()=>{
+  //   let allBlog=JSON.parse(localStorage.getItem('blogData'));
+  //   let updateData=allBlog.sort((a,b)=>{
+  //     return a.DOB.localeCompare(b.DOB)
+  //   })
+  //   setBlogData(updateData)
+  // }
 
-  const handelDesc=()=>{
-    let allBlog=JSON.parse(localStorage.getItem("blogData"));
-    let updateData=allBlog.sort((a,b)=>{
-      return b.DOB.localeCompare(a.DOB)
-    })
-    setBlogData(updateData)
-  }
+  // const handelDesc=()=>{
+  //   let allBlog=JSON.parse(localStorage.getItem("blogData"));
+  //   let updateData=allBlog.sort((a,b)=>{
+  //     return b.DOB.localeCompare(a.DOB)
+  //   })
+  //   setBlogData(updateData)
+  // }
+
+
+  const handleSort = (option) => {
+    let sortedData = [...blogData]; 
+    if(option==="all"){
+      sortedData=[...origindata]
+    }
+    else if (option === "ascfname") {
+      sortedData.sort((a, b) => a.fname.localeCompare(b.fname));
+    } else if (option === "descfname") {
+      sortedData.sort((a, b) => b.fname.localeCompare(a.fname)); 
+    } else if (option === "asctitle") {
+      sortedData.sort((a, b) => a.titlename.localeCompare(b.titlename)); 
+    } else if (option === "desctitle") {
+      sortedData.sort((a, b) => b.titlename.localeCompare(a.titlename)); 
+    }
+    else if(option==="ascDOB"){
+      sortedData.sort((a,b)=>a.DOB.localeCompare(b.DOB));
+    }
+    else if(option==="descDOB"){
+      sortedData.sort((a,b)=>b.DOB.localeCompare(a.DOB));
+    }
+    else if(option==="ascTime"){
+      sortedData.sort((a,b)=>a.Time.localeCompare(b.Time))
+    }
+    else if(option==="descTime"){
+      sortedData.sort((a,b)=>b.Time.localeCompare(a.Time));
+    }
+    setBlogData(sortedData);
+  };
+
+
   const handelSearch=()=>{
     let allBlogs=JSON.parse(localStorage.getItem('blogData'));
     console.log(allBlogs)
     let updataSearch=allBlogs.filter((blog)=>{
       return(
-        blog.fname.toLowerCase().includes(searchVal.toLowerCase())
+        blog.fname.toLowerCase().includes(searchVal.toLowerCase()) ||
+        blog.titlename.toLowerCase().includes(searchVal.toLowerCase()) ||
+        blog.DOB.toLowerCase().includes(searchVal.toLowerCase()) ||
+        blog.Time.toLowerCase().includes(searchVal.toLowerCase())
       );
     });
    setBlogData(updataSearch)
@@ -41,14 +78,15 @@ function CrudWithRouting() {  // Changed name from Rounting to Routing
   useEffect(() => {
     let data = localStorage.getItem('blogData');
     if (data) {
-      setBlogData(JSON.parse(data));
+      let parsedData= (JSON.parse(data));
+      setorigindata(parsedData);
+      setBlogData(parsedData);
     } else {
       navigate('/');
     }
   }, [navigate]);
 
   const goToSinglePage = (id) => {
-    // Ensure the route is correctly named
     navigate(`/ShowBlog/${id}`);
     // console.log(id);
  };
@@ -73,12 +111,30 @@ function CrudWithRouting() {  // Changed name from Rounting to Routing
           <Button onClick={handelSearch} className="rounded-0">
             <FaSearch />
           </Button>&nbsp;&nbsp;&nbsp;&nbsp;
-          <Button onClick={handelAsc}>
+          {/* <Button onClick={handelAsc}>
             <FaArrowUp />
           </Button>&nbsp;&nbsp;&nbsp;&nbsp;
           <Button onClick={handelDesc}>
             <FaArrowDown />
-          </Button>{" "}
+          </Button> */}
+          <select
+            className="form-select w-25"
+            onChange={(e) => {
+              setSortOption(e.target.value);
+              handleSort(e.target.value);
+            }}
+            value={sortOption}
+          >
+            <option value="all">All</option>
+            <option value="ascfname">Author (A-Z)</option>
+            <option value="descfname">Author (Z-A)</option>
+            <option value="asctitle">Title (A-Z)</option>
+            <option value="desctitle">Title (Z-A)</option>
+            <option value="ascDOB">DOB (A-Z)</option>
+            <option value="descDOB">DOB (Z-A)</option>
+            <option value="ascTime">Time (A-Z)</option>
+            <option value="descTime">Time (Z-A)</option>
+          </select>
         </div>
         <div className="blog-display">
           <h2 className="text-center py-3 fs-1 fw-bold">Blogs</h2>

@@ -55,16 +55,16 @@ ul{
   left: 50%;
   transform: translateY(-50%);
 }
-.addblogContent input ,.banner input{
-  background-color: #b8a7ba;
+.addblogContent input ,.banner input ,select:not(option){
+  background-color: #b8a7ba !important;
   border-radius: 5px;
-  padding: 8px 30px;
-  outline: none;
-  border: none;
+  padding: 8px 30px !important;
+  outline: none !important;
+  border: none !important;
 }
-.form-control:focus{
-  border: none;
-  box-shadow:none;
+.form-control:focus ,.form-select:focus{
+  border: none !important;
+  box-shadow:none !important;
   background-color: #c0b3c1d1;
   /* font-size: 18px; */
   
